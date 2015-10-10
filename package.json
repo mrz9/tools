@@ -14,7 +14,9 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/mrz9/tools.git",
+    "type":"svn",
+    "url":"https://github.com/mrz9/tools"
   },
   "dependencies": {
     "del": "^2.0.2",
