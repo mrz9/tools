@@ -2,11 +2,11 @@ var fs = require('fs');
 var readline = require('readline');
 var mime = require('mime');
 var qiniu = require('qiniu');
-	qiniu.conf.ACCESS_KEY = '70Iog28habwNHmPG59tD76rknhlSiXxWy9pRYPO6';
-	qiniu.conf.SECRET_KEY = 'KlfH0ra3Cjdy0dRu9vCVN9fuCrM1q8L0OEynV0NX';
+	qiniu.conf.ACCESS_KEY = '*************************';
+	qiniu.conf.SECRET_KEY = '*************************';
 	//test
-	//qiniu.conf.ACCESS_KEY = 'SF4jaBae_0eFpiRn6LzMrXIDJq-HhfY8T0BOC0as';
-	//qiniu.conf.SECRET_KEY = 'Ble7oJjoERuTK6cU_XYK8A4Zb9Z_8IK602TMkcmg';
+	//qiniu.conf.ACCESS_KEY = '*************************';
+	//qiniu.conf.SECRET_KEY = '*************************';
 
 
 var bucketname,prefix='',isReplace,filePath = __dirname+'/',fileName,fileList=[],rl;
