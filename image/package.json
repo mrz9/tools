@@ -1,0 +1,13 @@
+{
+  "name": "img-tools",
+  "description": "图片处理工具",
+  "version": "1.0.0",
+  "author": "mrz",
+  "private": true,
+  "dependencies": {
+    "gulp": "^3.9.1"
+  },
+  "devDependencies": {
+    "gulp-image-resize": "^0.12.0"
+  }
+}

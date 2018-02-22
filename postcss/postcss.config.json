@@ -1,0 +1,6 @@
+module.exports = {
+    plugins: [
+        require('cssnano')({zindex:false}),
+        require('autoprefixer')({ browsers: ['not ie < 8', 'last 2 versions'] })
+    ]
+}
