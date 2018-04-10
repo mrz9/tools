@@ -6,6 +6,19 @@ import Login from '@/admin/login.vue';
 import GoodEdit from '@/admin/good_edit.vue';
 import TypeEdit from '@/admin/type_edit.vue';
 
+//vant
+import { 
+  NavBar,
+  Icon,
+  Cell, 
+  CellGroup
+ } from 'vant';
+
+Vue.use(NavBar)
+    .use(Cell)
+    .use(CellGroup)
+    .use(Icon);
+
 Vue.use(VueRouter);
 
 const routes = [
