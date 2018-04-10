@@ -26,9 +26,8 @@
     <van-goods-action>
         <van-goods-action-mini-btn icon="chat" text="客服" />
         <van-goods-action-mini-btn icon="cart" text="购物车" info="5" />
-        <van-goods-action-mini-btn icon="shop" text="店铺" />
-        <van-goods-action-big-btn text="加入购物车" />
-        <van-goods-action-big-btn text="立即购买" primary @click="sku.status = true" />
+        <van-goods-action-big-btn text="收藏" />
+        <van-goods-action-big-btn text="查看规格" primary @click="sku.status = true" />
     </van-goods-action>
 
     <van-sku
@@ -42,12 +41,23 @@
         <template slot="sku-stepper">
             <span></span>
         </template>
+        <!-- 自定义 sku actions -->
+        <template slot="sku-actions" slot-scope="props">
+            <div class="van-sku-actions">
+                <van-button type="primary" bottom-action @click="qrShow = true">购买</van-button>
+            </div>
+        </template>
     </van-sku>
+
+    <van-popup v-model="qrShow">
+        <vue-q-art :config="qr"></vue-q-art>
+    </van-popup>
   </div><!-- end instance -->
 </template>
 
 <script>
 import Vue from 'vue';
+import VueQArt from 'vue-qart';
 import {
     Swipe, 
     SwipeItem,
@@ -56,8 +66,10 @@ import {
     Tab, 
     Tabs,
     Sku,
+    Button,
     GoodsAction,
     GoodsActionBigBtn,
+    Popup,
     GoodsActionMiniBtn
     } from 'vant';
 
@@ -73,9 +85,18 @@ export default {
         [GoodsAction.name]: GoodsAction,
         [GoodsActionBigBtn.name]: GoodsActionBigBtn,
         [GoodsActionMiniBtn.name]: GoodsActionMiniBtn,
+        [Button.name]: Button,
+        [Popup.name]: Popup,
+        'vue-q-art': VueQArt
     },
     data() {
         return {
+            qrShow:false,
+            qr:{
+                value:'https://u.wechat.com/MBCbd8go-JnHBJMqUTPbxnQ',
+                imagePath: '/static/imgs/logo.png',
+                filter: 'color'
+            },
             goods: {
                 // 商品标题
                 title: '这是一个标题，很长很长的标题这是一个标题，很长很长的标题这是一个标题，很长很长的标题',
@@ -84,7 +105,7 @@ export default {
             },
             images: [
                 'https://img.yzcdn.cn/1.jpg',
-                'https://img.yzcdn.cn/2.jpg'
+                '/static/imgs/logo.png'
             ],
             tabs:[
                 {
@@ -98,30 +119,64 @@ export default {
                 status:false,
                  tree: [
                     {
-                    k: '颜色', // skuKeyName：规格类目名称
-                    v: [
-                        {
-                            id: '30349', // skuValueId：规格值 id
-                            name: '红色', // skuValueName：规格值名称
-                            imgUrl: 'https://img.yzcdn.cn/1.jpg' // 规格类目图片，只有第一个规格类目可以定义图片
-                        },
-                        {
-                            id: '1215',
-                            name: '蓝色',
-                            imgUrl: 'https://img.yzcdn.cn/2.jpg'
-                        }
-                    ],
+                        k: '颜色', // skuKeyName：规格类目名称
+                        v: [
+                            {
+                                id: '30349', // skuValueId：规格值 id
+                                name: '红色', // skuValueName：规格值名称
+                                imgUrl: 'https://img.yzcdn.cn/1.jpg' // 规格类目图片，只有第一个规格类目可以定义图片
+                            },
+                            {
+                                id: '1215',
+                                name: '蓝色',
+                                imgUrl: 'https://img.yzcdn.cn/2.jpg'
+                            }
+                        ],
                         k_s: 's1' // skuKeyStr：sku 组合列表（下方 list）中当前类目对应的 key 值，value 值会是从属于当前类目的一个规格值 id
+                    },
+                    {
+                        k: '尺寸', // skuKeyName：规格类目名称
+                        v: [
+                            {
+                                id: '1',
+                                name: 'M码'
+                            },
+                            {
+                                id: '2',
+                                name: 'S码'
+                            }
+                        ],
+                        k_s: 's2' // skuKeyStr：sku 组合列表（下方 list）中当前类目对应的 key 值，value 值会是从属于当前类目的一个规格值 id
                     }
                 ],
                 list: [
                     {
                         id: 2259, // skuId，下单时后端需要
                         price: 100, // 价格（单位分）
+                        s1: '30349', // 规格类目 k_s 为 s1 的对应规格值 id
+                        s2: '1', // 规格类目 k_s 为 s2 的对应规格值 id
+                        stock_num:100,
+                    },
+                    {
+                        id: 2259, // skuId，下单时后端需要
+                        price: 100, // 价格（单位分）
+                        s1: '30349', // 规格类目 k_s 为 s1 的对应规格值 id
+                        s2: '2', // 规格类目 k_s 为 s2 的对应规格值 id
+                        stock_num:100,
+                    },
+                    {
+                        id: 2259, // skuId，下单时后端需要
+                        price: 100, // 价格（单位分）
                         s1: '1215', // 规格类目 k_s 为 s1 的对应规格值 id
-                        s2: '1193', // 规格类目 k_s 为 s2 的对应规格值 id
-                        s3: '0', // 最多包含3个规格值，为0表示不存在该规格
-                        stock_num: 110 // 当前 sku 组合对应的库存
+                        s2: '1', // 规格类目 k_s 为 s2 的对应规格值 id
+                        stock_num:100,
+                    },
+                    {
+                        id: 2259, // skuId，下单时后端需要
+                        price: 100, // 价格（单位分）
+                        s1: '1215', // 规格类目 k_s 为 s1 的对应规格值 id
+                        s2: '2', // 规格类目 k_s 为 s2 的对应规格值 id
+                        stock_num:100,
                     }
                 ],
                 price: '1.00', // 默认价格（单位元）
