@@ -1,0 +1,112 @@
+.z-popup {
+ 
+    .layui-layer-btn{
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        background: #f2f2f2;
+        text-align: center;
+    }
+    
+    .scroll-view{
+        background: #f2f2f2;
+        height:450px;
+        overflow-y:auto;
+        border-radius: 8px;
+        padding-top:10px;
+        padding-bottom:10px
+    }
+
+   ul{
+        padding-left:24px;
+        li {
+            line-height: 34px;
+            list-style: none;
+
+            a {
+                &:hover,i:hover {
+                    color:#4e97d9;
+                }
+                color:#444;
+                font-size: 14px;
+                display: block;
+                text-decoration: none!important;
+
+                i{
+                    display: inline-block;
+                    color:#888;
+                    margin-right:10px;
+                    font-size: 16px;
+                }
+            }
+
+            ul{
+                display: none;
+            }
+
+            &.open>ul{
+                display: block;
+            }
+
+            input{
+                margin-right:10px
+            }
+
+
+        }
+    }
+
+    .selected {
+        ul{
+            padding-left:0;
+
+            li {
+                
+                line-height: 40px;
+                overflow: hidden;
+                padding:0 10px;
+
+                span {
+                    float: left;
+                    
+                    &.all{
+                        color:#888;
+                        margin-left:8px;
+                    }
+                }
+
+                i {
+                    float: right;
+                    font-size: 16px;
+                    color:red;
+                    margin-top:12px;
+                }
+            }
+        }
+    }
+    
+    .has-child2{
+        font-size:12px;
+        float: right;
+        color:#0a8bfb!important;
+        margin-right:20px;
+        text-decoration: none!important;
+
+        &::before {
+            content:'下级'
+        }
+    }
+ 
+    .open>.has-child2::before {
+        content:'收起'
+    }
+    
+    .has-child>.popup-font::before {
+        content:"\f196"
+    }
+    
+    .open>.has-child>.popup-font::before{
+        content:"\f146";
+        color:#d7d7d7;
+    }
+}

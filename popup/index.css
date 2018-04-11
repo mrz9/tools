@@ -91,5 +91,6 @@ li{
 }
 
 .open>.has-child>.popup-font::before{
-    content:"\f146"
+    content:"\f146";
+    color:#d7d7d7;
 }
