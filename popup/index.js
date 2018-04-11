@@ -38,7 +38,7 @@
              */
             type:1,
             title:"弹窗",
-            content: $(".popup-select-wrap")
+            content: $(".z-popup")
         }
 
         //结果保存集合
