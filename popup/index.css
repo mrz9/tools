@@ -1,0 +1,87 @@
+li{
+    list-style: none;
+}
+.layui-layer-btn{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    background: #f2f2f2;
+    text-align: center;
+}
+
+.popup-select-wrap .scroll-view{
+    background: #f2f2f2;
+    height:450px;
+    overflow-y:auto;
+    border-radius: 8px;
+    padding-top:10px;
+    padding-bottom:10px
+}
+.scroll-view ul{
+    padding-left:24px;
+}
+.scroll-view ul li{
+    line-height: 34px;
+}
+.scroll-view ul li a{
+    color:#444;
+    font-size: 14px;
+    display: block;
+}
+.scroll-view ul li a:hover,.scroll-view ul li a i:hover{
+    color:#4e97d9;
+
+}
+.scroll-view .has-child2 {
+    font-size:12px;
+}
+.scroll-view ul li a i{
+    display: inline-block;
+    color:#888;
+    margin-right:10px;
+    font-size: 16px;
+}
+.scroll-view ul li input{
+    margin-right:10px
+}
+.scroll-view ul li ul{
+    display: none;
+}
+.scroll-view ul li.open>ul{
+    display: block;
+}
+.selected ul li{
+    line-height: 40px;
+    overflow: hidden;
+    padding:0 10px;
+
+}
+.selected ul{
+    padding-left:0;
+}
+.selected ul li span{
+    float: left;
+}
+.selected ul li span.all{
+    color:#888;
+    margin-left:8px;
+}
+.selected ul li i{
+    float: right;
+    font-size: 16px;
+    color:red;
+    margin-top:12px;
+}
+
+.has-child2{
+    float: right;
+    color:#0a8bfb!important;
+    margin-right:20px;
+    text-decoration: none!important;
+}
+.has-child2::before {
+    content:'下级'
+}
+.open>.has-child2::before {
+    content:'收起'
+}
