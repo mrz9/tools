@@ -7,12 +7,14 @@
   "scripts": {
     "dev": "node build/dev-server.js",
     "start": "node build/dev-server.js",
+    "admin": "node build/dev-admin-server.js",
     "build": "node build/build.js"
   },
   "dependencies": {
     "vant": "^1.0.1",
     "vant-css": "^1.0.1",
     "vue": "^2.5.16",
+    "vue-drawer-layout": "^0.3.1",
     "vue-qart": "^2.1.1",
     "vue-router": "^3.0.0"
   },
