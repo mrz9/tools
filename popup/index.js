@@ -1,5 +1,6 @@
 /**
- * 弹窗插件，通用版 1.0
+ * 弹窗插件，通用版 1.0 
+ * 目前支持父节点可以选，并且父节点选择并非字节的的全选，其他类型后续扩展
  * 约束：
  * 1. 插件接受的数据格式（必须包含）
  * {
@@ -12,6 +13,11 @@
  * 2. 判断单前是否选中的规则
  * ‘type(_pid)?_id' //当前项的类型， 父节点的id（如果有的话），但前项目的id
  * 
+ * 
+ * methods:
+ * init(cb),  //设置初始化数据，需要构建符合插件的格式，通过cb传回给插件使用
+ * load(param,cb), //加载更多数据，param参数提供需要与后端交互的数据，需要构建符合插件的格式，通过cb传回给插件使用
+ * callback(rs) //点击保存后返回已选的数据到页面
  */
 ;(function(){
     function _Popup(target,option){
@@ -22,7 +28,6 @@
         //记录状态
         this.status = {
             hasInit:false,
-            hasFirstLoad:false
         }
         //配置项目
         this.$opt = {
@@ -31,12 +36,15 @@
         }
 
         //结果保存集合
-        window.selected = this.selectArr = [];
+        this.selectArr = [];
+
         $.extend(this.$opt,option);
 
         this.bind();
     }
-
+    /**
+     * $map 操作集合
+     */
     _Popup.prototype.getUid = function(){
         return this.$uid++;
     }
@@ -54,6 +62,9 @@
         return this.$map[id];
     }
 
+    /**
+     * 绑定事件，主要ui逻辑在此方法处理
+     */
     _Popup.prototype.bind = function(){
         var self = this;
         var $origin = $(this.$opt.content).find('.origin');
@@ -291,7 +302,19 @@
         }
     }
 
-    $.fn.taskPopup = function(option){
+    /**
+     * 清楚所有数据，同时实例变成未初始化状态
+     */
+    _Popup.prototype.$destory = function(){
+        $(this.$opt.content).find('.origin>ul').html('');
+        $(this.$opt.content).find('.selected>ul').html('');
+        this.selectArr = [];
+        this.$map = {}
+        this.$uid = 0;
+        this.status.hasInit = false;
+    }
+
+    $.fn.zPopup = function(option){
         //便于调试
         window.zPopup = window.zPoppip || [];
         var instance = new _Popup(this,option);
