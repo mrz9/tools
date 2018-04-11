@@ -85,3 +85,11 @@ li{
 .open>.has-child2::before {
     content:'收起'
 }
+
+.has-child>.popup-font::before {
+    content:"\f196"
+}
+
+.open>.has-child>.popup-font::before{
+    content:"\f146"
+}

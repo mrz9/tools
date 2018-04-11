@@ -262,7 +262,7 @@
                         case 2:
                             if(!item.is_checkbox){
                                 var dclass = !hasShowNext ? 'load-empty' : hasChildData ? 'load-done':'';
-                                html += '<a href="javascript:;" class="has-child get-next ' + dclass +'"><i class="fa fa-plus-square-o"></i>'+item.name+'</a>'
+                                html += '<a href="javascript:;" class="has-child get-next ' + dclass +'"><i class="fa popup-font"></i>'+item.name+'</a>'
                                 if(hasShowNext){//有下一级的情况
                                     html +='<ul>';
                                     if(hasChildData){
@@ -323,7 +323,7 @@
             var leftstr = "";
             $.each(self.selectArr,function(i,id){
                 var item = self.get(id);
-                leftstr += '<li class="left-item" data-uid="'+item.uid+'" data-match="'+ item.match+'"><span>'+item.name+'</span> <i class="fa fa-close"></i></li>'
+                leftstr += '<li class="left-item" data-uid="'+item.uid+'" data-match="'+ item.match+'"><span>'+ (item.parent ? item.parent.name  + ' ' : '') + item.name + '</span> <i class="fa fa-close"></i></li>'
             })
             $selected.find("ul").html(leftstr);
         }
