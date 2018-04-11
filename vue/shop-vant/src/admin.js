@@ -11,12 +11,16 @@ import {
   NavBar,
   Icon,
   Cell, 
-  CellGroup
+  CellGroup,
+  Field,
+  Uploader
  } from 'vant';
 
 Vue.use(NavBar)
     .use(Cell)
     .use(CellGroup)
+    .use(Field)
+    .use(Uploader)
     .use(Icon);
 
 Vue.use(VueRouter);
