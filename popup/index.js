@@ -189,7 +189,11 @@
             var _this = $(this),
                 _parent = _this.closest("li"),
                 uid = _parent.data('uid');
-               
+            
+            if(_this.hasClass('load-empty')){
+                layer.msg('没有下级数据');
+                return false;
+            }
 
             if(_parent.hasClass("open")){
                 _parent.removeClass("open");
@@ -199,9 +203,7 @@
                 _parent.addClass("open");
 
             }
-            if(_this.hasClass('load-empty')){
-                layer.msg('没有下级数据');
-            }else if(!_this.hasClass('load-done')){
+            if(!_this.hasClass('load-done')){
 
                 var uitem = self.get(uid);
                 if(!uitem) return false;
