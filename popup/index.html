@@ -58,6 +58,7 @@ function task_parseData(){
 
 $('.action').zPopup({
     title:'选择人员',
+    type:1,
     init:function(cb){
         /**
          * 此方法是打开弹窗设置初始化数据
@@ -65,19 +66,19 @@ $('.action').zPopup({
          * 需要构建match字段，改字段用于区分是否勾选
          **/
 
-         cb([{
-             id:5,
-             name:'我是5号佳丽',
-             type:'department',
-             match:'department_5',
-         },
-         {
-             id:10,
-             name:'我是10号佳丽',
-             type:'member',
-             match:'department_3_5',
-         }
-        ])
+        //  cb([{
+        //      id:5,
+        //      name:'我是5号佳丽',
+        //      type:'department',
+        //      match:'department_5',
+        //  },
+        //  {
+        //      id:10,
+        //      name:'我是10号佳丽',
+        //      type:'member',
+        //      match:'department_3_5',
+        //  }
+        // ])
     },
     load:function(param,cb){
         /**

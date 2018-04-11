@@ -1,6 +1,6 @@
 /**
  * 弹窗插件，通用版 1.0 
- * 目前支持父节点可以选，并且父节点选择并非字节的的全选，其他类型后续扩展
+ * 目前父节点全选并非子节点的全选，其他类型后续扩展
  * 约束：
  * 1. 插件接受的数据格式（必须包含）
  * {
@@ -8,6 +8,7 @@
  *   name: 'xx',
  *   type: 'xxx', //表示改项的类型，用于区分节点，如果后端数据不需要区分类型，可以在过滤方法添加固定值该属性，要保证能区分各个节点
  *   is_sub: 1|0, // 1表示有下一级，0表示5无下级
+ *   is_checkbox:boolean , //当type =2的情况下需要此参数判断是否未复选框，改字段由前端构建即可
  * }
  * 
  * 2. 判断单前是否选中的规则
@@ -31,6 +32,11 @@
         }
         //配置项目
         this.$opt = {
+            /**
+             * 1: 父节点可选，但是非子节点的全选
+             * 2: 父节点不可选
+             */
+            type:1,
             title:"弹窗",
             content: $(".popup-select-wrap")
         }
@@ -132,7 +138,8 @@
                 if(!ignoreCheckAll){
                     var flag = true;
                     siblings.each(function(){
-                        if(!$(this).find('>label>input').is(':checked')){
+                        var input = $(this).find('>label>input')
+                        if(input.length>0 && !input.is(':checked')){
                             flag = false;
                         }
                     });
@@ -147,7 +154,7 @@
         });
 
         //展开下级
-        $origin.on("click",".has-child2",open);
+        $origin.on("click",".get-next",open);
 
         //全选操作
         $origin.on('change',".checkall input",function(){
@@ -216,7 +223,6 @@
                 checkCheck(_this.siblings('ul'));
             }
         }
-        
 
         /**
          * 渲染树
@@ -237,33 +243,54 @@
                     match += item.id;
                     item.match = match;
                     var suid = self.add(item);
-                    html += '<li class="item child" data-uid="'+suid+'">'+
-                    '<label ><input type="checkbox" class="check" value="'+item.id+'" data-match="'+item.match+'">'+item.name+'</label> ';
-                    if(item.is_sub == 1 || (item.child && item.child.length)){//有下一级的情况
-                        var hasChildData = item.child && item.child.length;
-                        html +='<a href="javascript:;" class="has-child2 ' + (hasChildData ? 'load-done':'') +'"></a>'+
-                        '<ul>';
-                        if(hasChildData){
-                            html += render(suid,item.child);
-                        }
-                        html +='</ul></li>'
+                    html += '<li class="item child" data-uid="'+suid+'">';
+
+                    var hasChildData = item.child && item.child.length;
+                    var hasShowNext = item.is_sub == 1 || hasChildData;
+                    
+                    switch(self.$opt.type){
+                        case 1:
+                            html += '<label ><input type="checkbox" class="check" value="'+item.id+'" data-match="'+item.match+'">'+item.name+'</label> ';
+                            if(hasShowNext){//有下一级的情况
+                                html +='<a href="javascript:;" class="has-child2 get-next ' + (hasChildData ? 'load-done':'') +'"></a><ul>'
+                                if(hasChildData){
+                                    html += render(suid,item.child);
+                                }
+                                html +='</ul></li>'
+                            }
+                            break;
+                        case 2:
+                            if(!item.is_checkbox){
+                                var dclass = !hasShowNext ? 'load-empty' : hasChildData ? 'load-done':'';
+                                html += '<a href="javascript:;" class="has-child get-next ' + dclass +'"><i class="fa fa-plus-square-o"></i>'+item.name+'</a>'
+                                if(hasShowNext){//有下一级的情况
+                                    html +='<ul>';
+                                    if(hasChildData){
+                                        html += render(suid,item.child);
+                                    }
+                                    html +='</ul></li>'
+                                }
+                            }else{
+                                html += '<label ><input type="checkbox" class="check" value="'+item.id+'" data-match="'+item.match+'">'+item.name+'</label> ';
+                            }
+                            break;
                     }
+                    
+                    
                 });
             }
             
             return html;
         }
 
-
-        //判断是否以加入数组中
+        /**
+         * 判断是否以加入数组中
+         * 检查勾选的规则是
+         * type(_pid)?_id
+         * 这种规则适合有type类型返回并且同级不可能存在类型和id相同，
+         * 或者不同级别的情况（此处就记录两级），不可能存在类型且上下两级的id同时相同的数据
+         */
         function checkCheck(_this){
-            /**
-             * 检查勾选的规则是
-             * type(_pid)?_id
-             * 这种规则适合有type类型返回并且同级不可能存在类型和id相同，
-             * 或者不同级别的情况（此处就记录两级），不可能存在类型且上下两级的id同时相同的数据
-             */
-
             var li = $selected.find('ul>li');
             li.each(function(){
                 var ck = _this.find('[type=checkbox][data-match="'+$(this).data('match')+'"]');

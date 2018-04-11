@@ -10,6 +10,7 @@ Mock.mock(/^\?ct=ajax&ac=get_org_data/,{
             'type':function() {
                 return Math.random() > 0.5 ? 'department' : 'member';
               },
+            'is_checkbox':'@boolean',
             'is_sub':'@integer(0, 1)'
         }
     ]
