@@ -6,6 +6,8 @@ import Login from '@/admin/login.vue';
 import GoodEdit from '@/admin/good_edit.vue';
 import TypeEdit from '@/admin/type_edit.vue';
 
+require('@/admin/less/main.less');
+
 //vant
 import { 
   NavBar,
@@ -13,7 +15,11 @@ import {
   Cell, 
   CellGroup,
   Field,
-  Uploader
+  Uploader,
+  Picker,
+  Popup,
+  Button,
+  Tag
  } from 'vant';
 
 Vue.use(NavBar)
@@ -21,6 +27,10 @@ Vue.use(NavBar)
     .use(CellGroup)
     .use(Field)
     .use(Uploader)
+    .use(Picker)
+    .use(Popup)
+    .use(Button)
+    .use(Tag)
     .use(Icon);
 
 Vue.use(VueRouter);

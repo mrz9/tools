@@ -43,15 +43,6 @@ export default {
 </script>
 
 <style lang="less">
-body {
-  background-color:#efefef;
-}
-.cell-title {
-  padding:10px 15px;
-  font-size:14px;
-  color:rgba(69,90,100,.6)
-}
-
 .upload-wrap {
   padding:15px;
   padding-top:5px;
