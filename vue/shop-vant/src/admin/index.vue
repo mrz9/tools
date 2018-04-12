@@ -1,7 +1,5 @@
 <template>
   <div id="app">
-    
-   
     <vue-drawer-layout
       ref="drawer"
       :animatable="true"
@@ -18,14 +16,16 @@
                 <van-cell title="添加分类" @click="toggleDrawer" to="/type/add"/>
             </van-cell-group>
           </div><!-- drawer-content -->
-          <div slot="content">
-            <van-nav-bar title="傻逼管理后台">
-                <van-icon name="wap-nav" slot="left" @click="toggleDrawer"/>
-                <van-icon name="home" slot="right" @click="$router.push('/')"/>
-            </van-nav-bar>
-            <!-- 路由出口 -->
-            <!-- 路由匹配到的组件将渲染在这里 -->
-            <router-view></router-view>
+          <div slot="content" class="flex-scroll-view">
+                <van-nav-bar title="傻逼管理后台" class="scroll-header">
+                    <van-icon name="wap-nav" slot="left" @click="toggleDrawer"/>
+                    <van-icon name="home" slot="right" @click="$router.push('/')"/>
+                </van-nav-bar>
+                <!-- 路由出口 -->
+                <!-- 路由匹配到的组件将渲染在这里 -->
+                <div class="scroll-view">
+                    <router-view></router-view>
+                </div>
           </div><!-- main-content -->
 </vue-drawer-layout>
       
@@ -63,6 +63,20 @@ export default {
         // background-clip: text;         /* 规定背景的划分区域 */
         // -webkit-text-fill-color: transparent;
         color:rgba(255,229,186,1)
+    }
+}
+
+.flex-scroll-view {
+    display: flex;
+    flex-direction: column;
+    height:100%;
+
+    .scroll-header {
+        flex-shrink:0;
+    }
+    .scroll-view {
+        flex:auto;
+        overflow: auto;
     }
 }
 </style>
