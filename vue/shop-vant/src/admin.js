@@ -6,6 +6,9 @@ import Login from '@/admin/login.vue';
 import GoodEdit from '@/admin/good_edit.vue';
 import TypeEdit from '@/admin/type_edit.vue';
 
+//test
+require('@/test/mock.js')
+
 require('@/admin/less/main.less');
 
 //vant
@@ -19,7 +22,8 @@ import {
   Picker,
   Popup,
   Button,
-  Tag
+  Tag,
+  Toast
  } from 'vant';
 
 Vue.use(NavBar)
