@@ -11,7 +11,7 @@ Mock.mock(/^\?ct=ajax&ac=get_org_data/,{
                 return Math.random() > 0.5 ? 'department' : 'member';
               },
             'is_checkbox':'@boolean',
-            'is_sub':'@integer(0, 1)'
+            'is_child':'@integer(0, 1)'
         }
     ]
 })
