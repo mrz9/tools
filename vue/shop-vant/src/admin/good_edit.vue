@@ -1,105 +1,156 @@
 <template>
-  <div class="page-tyoe-edit">
-      <div class="cell-title">分类名称：</div>
-      <van-field  v-model="form.name" placeholder="选择分类名称" />
+  <div class="page-good-edit">
+      <div class="cell-title">标题：</div>
+      <van-field type="textarea" :autosize="{maxHeight: 100}" v-model="form.title" placeholder="输入商品标题" />
 
-      <div class="cell-title">父级分类：<small>（若不选择，默认为顶级分类）</small></div>
-      <van-cell is-link value="点击修改" @click="popupShow=true">
-        <template slot="title">
-          <span class="van-cell-text">当前分类</span>
-          <van-tag plain type="primary">{{typeLabel}}</van-tag>
-        </template>
-      </van-cell>
+      <div class="cell-title">现价：</div>
+      <van-field type="number" v-model="form.n_price" placeholder="现在购买价格" />
       
-      <van-popup v-model="popupShow" position="bottom">
-        <van-picker
-          show-toolbar
-          title="选择"
-          :columns="typeData"
-          @cancel="onCancel"
-          @confirm="onConfirm"
-        />
-      </van-popup>
-      <div class="filed-wrap bottom-btn">
+      <div class="cell-title">原价：</div>
+      <van-field type="number" v-model="form.o_price" placeholder="原价（不填则页面不显示原价）" />
+      
+      <div class="cell-title">详情：</div>
+      <van-field type="textarea" :autosize="true" v-model="form.content" placeholder="输入商品描述" />
+    
+      <div class="cell-title">规格类型：</div>
+      <van-cell>
+        <div>
+          <a href="javascript:;" class="btn-outline btn-primary">添加</a>
+        </div>
+      </van-cell>
+
+    <div class="cell-title">效果图：</div>
+    <van-cell-group class="upload-wrap">
+      <div class="flex-item">
+        <van-uploader class="add-img" :after-read="imgRead">
+          <van-icon name="photograph" />
+        </van-uploader>
+      </div>
+      <div class="flex-item" v-for="(img,index) in form.thumbs" :key="index">
+        <div class="img" :style="{'background-image':'url('+img+')'}" ></div>
+      </div>
+    </van-cell-group>
+
+      <div class="filed-wrap ">
         <van-button class="submit" type="primary" :disabled="formStatus" :loading="posting" block @click="submit">提交</van-button>
       </div>
   </div>
 </template>
 <script>
-import axios from 'axios';
-import { Toast } from 'vant';
-
 export default {
-  data(){
+  name: "good_edit",
+  data() {
     return {
-      pickerInstance:'',
-      posting:false,
-      popupShow:false,
-      typeLabel:'顶级分类',
-      form:{
-        name:'',
-        pid:0
-      },
-      typeData:[
-        {
-          text:"顶级分类",
-          id:0
-        },
-        {
-          text:"分类1",
-          id:1
-        },
-      ]
+      posting: false,
+      form: {
+        title: "",
+        n_price: "", //现价
+        o_price: "", //原价 非必填
+        content: "",
+        thumbs: []
+      }
+    };
+  },
+  computed: {
+    formStatus() {
+      // title: "",
+      //   n_price: "", //现价
+      //   o_price: "", //原价 非必填
+      //   content: "",
+      //   thumbs: []
+
+        // if(!this.form.title.trim() ||
+        //     this.form.n_price &&isNaN(this.form.n_price) 
+        //   )
+
+      return !String(this.form.name).trim();
     }
   },
-  computed:{
-    formStatus(){
-      return !String(this.form.name).trim()
-    }
-  },
-  methods:{
-    onCancel(item){
-      this.popupShow = false
-    },
-    onConfirm(item){
-      this.form.pid = item.id;
-      this.typeLabel = item.text;
-      this.popupShow = false
+  methods: {
+    imgRead(rs) {
+      this.form.thumbs.push(rs.content);
     },
     reset(){
-      this.form.name = '';
-      this.form.pid = 0;
-      this.typeLabel = '顶级分类'
+      this.posting = false;
+      this.form = {
+        title: "",
+        n_price: "", //现价
+        o_price: "", //原价 非必填
+        content: "",
+        thumbs: []
+      }
     },
-    submit(){
+    submit() {
       this.posting = true;
-      axios.post('/admin/type/create', this.form)
-      .then((response)=>{
-        let {data} = response
-        if(data.status == 0){
-          Toast.success('成功文案');
-          this.reset();
-        }else{
-          Toast.fail(data.message);
-        }
-         this.posting = false;
-      })
-      .catch((error)=>{
-        Toast.fail('请求错误');
-        this.posting = false;
-      })
+      axios
+        .post("/admin/good/create", this.form)
+        .then(response => {
+          let { data } = response;
+          if (data.status == 0) {
+            Toast.success("创建成功");
+            this.reset();
+          } else {
+            Toast.fail(data.message);
+          }
+          this.posting = false;
+        })
+        .catch(error => {
+          Toast.fail("请求错误");
+          this.posting = false;
+        });
     }
   }
-}
+};
 </script>
+
 <style lang="less">
-  .page-tyoe-edit {
-    .bottom-btn {
-      position:absolute;
-      bottom:0;
-      left:0;
+body {
+  background-color: #efefef;
+}
+// .page-good-edit {
+  .cell-title {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: rgba(69, 90, 100, 0.6);
+  }
+
+  .upload-wrap {
+    padding: 15px;
+    padding-top: 5px;
+    font-size: 0;
+  }
+
+  .flex-item {
+    margin-top: 10px;
+    display: inline-block;
+    width: 33.3333%;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .add-img,
+  .img {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+  }
+  .img {
+    background-color: #d7d7d7;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+  .add-img {
+    text-align: center;
+    box-sizing: border-box;
+    border: 1px solid #d7d7d7;
+
+    i {
+      line-height: 100px;
+      color: #d7d7d7;
+      font-size: 46px;
     }
   }
+// }
 </style>
 
 
