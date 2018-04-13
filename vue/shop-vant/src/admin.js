@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 import Login from '@/admin/login.vue';
 import GoodEdit from '@/admin/good_edit.vue';
 import TypeEdit from '@/admin/type_edit.vue';
+import 'vant/lib/vant-css/icon-local.css';
 
 //test
 require('@/test/mock.js')
@@ -23,7 +24,8 @@ import {
   Popup,
   Button,
   Tag,
-  Toast
+  Toast,
+  ContactCard
  } from 'vant';
 
 Vue.use(NavBar)
@@ -35,6 +37,7 @@ Vue.use(NavBar)
     .use(Popup)
     .use(Button)
     .use(Tag)
+    .use(ContactCard)
     .use(Icon);
 
 Vue.use(VueRouter);
