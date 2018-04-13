@@ -7,13 +7,14 @@
  *   id: 1,
  *   name: 'xx',
  *   type: 'xxx', //表示改项的类型，用于区分节点，如果后端数据不需要区分类型，可以在过滤方法添加固定值该属性，要保证能区分各个节点
- *   is_sub: 1|0, // 1表示有下一级，0表示5无下级
+ *   is_child: 1|0, // 1表示有下一级，0表示5无下级
  *   is_checkbox:boolean , //当type =2的情况下需要此参数判断是否未复选框，改字段由前端构建即可
  * }
  * 
  * 2. 判断单前是否选中的规则
  * ‘type(_pid)?_id' //当前项的类型， 父节点的id（如果有的话），但前项目的id
  * 
+ * single:boolean, //配置是否未单选，默认false
  * 
  * methods:
  * init(cb),  //设置初始化数据，需要构建符合插件的格式，通过cb传回给插件使用
@@ -38,13 +39,22 @@
              */
             type:1,
             title:"弹窗",
-            content: $(".z-popup")
+            content: $(".z-popup"),
+            single:false, //是否单选
         }
 
         //结果保存集合
         this.selectArr = [];
 
         $.extend(this.$opt,option);
+
+        if(this.$opt.init){
+            this.$init = this.$opt.init;
+        }
+
+        if(this.$opt.callback){
+            this.$callback = this.$opt.callback;
+        }
 
         this.bind();
     }
@@ -94,20 +104,22 @@
                         var item = self.get(id);
                         if(item) rs.push(item);
                     })
-                    typeof self.$opt.callback == 'function' && self.$opt.callback(self,rs);
+                    typeof self.$callback == 'function' && self.$callback(rs);
                     layer.close(index);
                 },
                 success: function () {
                     if(!self.status.hasInit){
                         //初始化操作
                         self.status.hasInit = true;
-                        typeof self.$opt.init== 'function' && self.$opt.init(function(rs){
+                        typeof self.$init== 'function' && self.$init(function(rs){
 
                             //init 构建的uid一律为负数,注意需要构建match字段，通过此字段来确定是否勾选
                             var idx = -2;
                             $.each(rs,function(i,item){
+                                if(!self.$opt.single || i<1)
                                 self.selectArr.push(self.set(idx--,item));
                             })
+                           
                             leftCreate();
                         });
                         typeof self.$opt.load == 'function' && self.$opt.load({first:true},function(data){
@@ -132,8 +144,9 @@
             var pid = p.val();
 
             var siblings = _this.closest('li').siblings('.child');
-
             if(this.checked){
+                //单选时先把以选择的干掉
+                !ignoreRender && this.checked && self.$opt.single && arrRemoveAll(),$(this).prop('checked',true);
                 objToArr(uid);
                 if(!ignoreCheckAll){
                     var flag = true;
@@ -158,6 +171,9 @@
 
         //全选操作
         $origin.on('change',".checkall input",function(){
+            //单选时不应该出现全选，防止一下还是加个return好
+            if(self.$opt.single) return false;
+
             var checkboxs = $(this).closest('li').siblings(".child").find('>label>.check');
             if(this.checked){
                 checkboxs.each(function(i){
@@ -234,7 +250,7 @@
         function render(uid,data){
             var html= '';
             if(data && data.length){
-                html += '<li class="checkall"><label ><input type="checkbox">全选</label></li>';
+                !self.$opt.single && (html += '<li class="checkall"><label ><input type="checkbox">全选</label></li>');
                 $.each(data,function(i,item){
                     var match = item.type + '_' ;
                     if(uid !== -1){//存在父级的情况
@@ -248,7 +264,7 @@
                     html += '<li class="item child" data-uid="'+suid+'">';
 
                     var hasChildData = item.child && item.child.length;
-                    var hasShowNext = item.is_sub == 1 || hasChildData;
+                    var hasShowNext = item.is_child == 1 || hasChildData;
                     
                     switch(self.$opt.type){
                         case 1:
@@ -315,6 +331,14 @@
             self.selectArr.splice(index, 1)
 
         }
+
+        //全删除
+        function arrRemoveAll(){
+            self.selectArr = [];
+            $origin.find(':checkbox').prop('checked',false);
+            leftCreate();
+        }
+
         //push
         function objToArr(uid){
             var index = self.selectArr.indexOf(uid);
@@ -345,7 +369,7 @@
 
     $.fn.zPopup = function(option){
         //便于调试
-        window.zPopup = window.zPoppip || [];
+        window.zPopup = window.zPopup || [];
         var instance = new _Popup(this,option);
         window.zPopup.push(instance);
         return instance;
