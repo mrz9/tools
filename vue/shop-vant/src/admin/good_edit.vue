@@ -13,11 +13,33 @@
       <van-field type="textarea" :autosize="true" v-model="form.content" placeholder="输入商品描述" />
     
       <div class="cell-title">规格类型：</div>
-      <van-cell>
-        <div>
-          <a href="javascript:;" class="btn-outline btn-primary">添加</a>
-        </div>
-      </van-cell>
+      <div class="type-group">
+
+          <div class="type-wrap van-contact-card" v-for="(item,index) in form.tree" :key="index">
+              <van-field type="text" placeholder="分类名字" v-model="item.name" :error="!item.name">
+                 <van-button slot="button" size="mini" type="danger" @click="deleteTree(index)">删除</van-button>
+              </van-field>
+              <van-cell  class="sub-list">
+                <van-tag type="primary" v-for="(tag,idx) in item.list" :key="idx">{{tag}}</van-tag>
+              </van-cell>
+              <van-field
+                v-show="item.name"
+                type="text"
+                v-model.trim="item.tag"
+                :placeholder="'请输入规格' + item.name + '规格'"
+                :disabled="!item.name"
+                @click-icon="!!item.tag && item.list.push(item.tag),item.tag = ''"
+              >
+                <div slot="icon">
+                  <van-icon name="add-o" class="text-primary"/>
+                </div>
+              </van-field>
+          </div>
+  
+          <van-cell>
+            <a href="javascript:;" class="btn-outline btn-primary" @click="treeAdd">添加</a>
+          </van-cell>
+      </div>
 
     <div class="cell-title">效果图：</div>
     <van-cell-group class="upload-wrap">
@@ -47,7 +69,8 @@ export default {
         n_price: "", //现价
         o_price: "", //原价 非必填
         content: "",
-        thumbs: []
+        thumbs: [],
+        tree:[]
       }
     };
   },
@@ -67,6 +90,19 @@ export default {
     }
   },
   methods: {
+    treeTagAdd(){
+      console.log(arguments);
+    },
+    deleteTree(idx){
+      this.form.tree.splice(idx,1);
+    },
+    treeAdd(){
+      this.form.tree.push({
+        name:'',
+        list:[],
+        tag:''
+      })
+    },
     imgRead(rs) {
       this.form.thumbs.push(rs.content);
     },
@@ -148,6 +184,25 @@ body {
       line-height: 100px;
       color: #d7d7d7;
       font-size: 46px;
+    }
+  }
+
+  .type-group {
+    padding-left:0;
+    padding-right:0;
+    .type-wrap {
+      margin-bottom:10px;
+    }
+    .van-cell {
+      
+    }
+    .sub-list {
+      margin-left:-10px;
+      background-color:#efefef;
+
+      .van-tag {
+        margin-left:10px;
+      }
     }
   }
 // }
