@@ -26,7 +26,7 @@
                 v-show="item.name"
                 type="text"
                 v-model.trim="item.tag"
-                :placeholder="'请输入规格' + item.name + '规格'"
+                :placeholder="'请输入' + item.name + '规格'"
                 :disabled="!item.name"
                 @click-icon="!!item.tag && item.list.push(item.tag),item.tag = ''"
               >
