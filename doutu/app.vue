@@ -17,10 +17,30 @@
 </template>
 <script>
 import axios from 'axios';
+
+function dataURLtoBlob(dataurl) {
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new Blob([u8arr], {type:mime});
+}
+function dataURLtoFile(dataurl, filename) {
+    console.log(dataurl);''
+    var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+    while(n--){
+        u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, {type:mime});
+}
+
 export default {
   name:'',
   data(){
       return {
+          copyFile:'',
           status:false,
           more:0,
           search:'',
@@ -29,7 +49,29 @@ export default {
       }
   },
   mounted(){
-      
+    document.addEventListener('paste', (e)=>{
+        e.preventDefault();
+        var clipboard = e.clipboardData;
+        var item = clipboard.items[0];
+        console.log(item);
+        if(item.kind === 'file'){
+            var imgFile = item.getAsFile();
+            console.log(imgFile);
+        }else{
+            var temp = clipboard.getData('text/html');
+            console.log(temp);
+
+        }
+        console.log('Ctrl + V, pasting');
+    }, false);
+
+    document.addEventListener('copy', e=>{
+        e.preventDefault();
+        var clipboard = e.clipboardData;
+        console.log(clipboard);
+        console.log('Ctrl + C, copying');
+        clipboard.setData('image/jpeg', this.copyFile)
+}, false);
   },
   methods:{
        copyDiv(e){
@@ -42,6 +84,18 @@ export default {
             div.blur();
            
        },
+      getBase64FromServer(url){
+          return new Promise((resolve,reject)=>{
+
+              return axios.get(`http://localhost:3000/base64?url=${encodeURIComponent(url)}`)
+            .then(rs=>{
+                resolve(rs.data);
+            })
+            .catch(e=>{
+                reject(e);
+            })
+          })
+      },
       load(){
           if(this.status || !this.search) return false;
           this.status = true;
@@ -65,31 +119,27 @@ export default {
                 })
       },
       copy(e){
-          let img = e.currentTarget;
-          img.setAttribute('crossOrigin', 'anonymous');
+          var clipboard = e.clipboardData;
+          console.log(clipboard);
+          let oimg = e.currentTarget;
+        //   let img= new Image();
+        //   img.setAttribute('crossOrigin', 'anonymous');
+          this.getBase64FromServer(oimg.src).then(rs=>{
+            console.log('rs',rs);
+             this.copyFile = dataURLtoFile(`data:${rs.type};base64,${rs.base64}`,'filename.png');
+             console.log(this.copyFile);
+          })
+        //   img.onload = function(){
+        //     let canvas = document.createElement('canvas');
+        //     let ctx = canvas.getContext('2d');
+        //     canvas.width = img.width;
+        //     canvas.height = img .height;
 
-        //   let canvas = document.createElement('canvas');
-            let canvas = document.getElementById('canvas');
-          let ctx = canvas.getContext('2d');
-          canvas.width = img.width;
-          canvas.height = img .height;
-
-          ctx.drawImage(img,0,0);
-          setTimeout(()=>{
-              canvas.toBlob(function(blob) {
-                    console.log(blob);
-                    // var newImg = document.createElement("img"),
-                    //     url = URL.createObjectURL(blob);
-
-                    // newImg.onload = function() {
-                    //     // no longer need to read the blob so it's revoked
-                    //     URL.revokeObjectURL(url);
-                    // };
-
-                    // newImg.src = url;
-                    // document.body.appendChild(newImg);
-                });
-          },500)
+        //     ctx.drawImage(img,0,0);
+        //     let base64 = canvas.toDataURL('image/png');
+        //     console.log(base64);
+        //   }
+        //   img.src = oimg.src
       }
   }
 }

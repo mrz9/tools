@@ -6,6 +6,7 @@ var fs = require('fs');
 var path = require('path');
 //导入url模块
 var url = require('url');
+var querystring = require('querystring');
 //2.创建服务器
 var app = http.createServer();
 
@@ -49,7 +50,35 @@ app.on('request', function (req, res) {
             res.end(body);
         });
          
-    } else {
+    } else if(pathname === '/base64'){
+        let query = parseObj.query;
+  
+        console.log(query);
+        request
+        .get(query.url)
+        .on('error', function(err) {
+            // decompressed data as it is received
+            console.log('err: ' + err)
+        })
+        .on('response', function(response) {
+        // unmodified http.IncomingMessage object
+            var body = '',
+                type = response.headers["content-type"];
+            response.setEncoding('binary');
+            response.on('data', function(chunk) {
+                // compressed data as it is received
+                body += chunk;
+            });
+            response.on('end', function () {
+                var base64 = new Buffer(body, 'binary').toString('base64');
+                var data = {
+                    type   : type ,
+                    base64 : base64 
+                };
+                res.end(JSON.stringify(data));
+            });
+        })
+    }else {
         res.end('请求路径： ' + req.url);
     }
 });
