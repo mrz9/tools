@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>弹窗</title>
+    <!--ui 所需要的资源-->
+    <link rel="stylesheet" href="http://ui.phpcall.org/static/css/bootstrap.min14ed.css">
+    <link rel="stylesheet" href="http://ui.phpcall.org/static/css/font-awesome.min93e3.css?v=4.4.0">
+    <link rel="stylesheet" href="http://ui.phpcall.org/static/css/animate.min.css">
+
+    <script src="http://ui.phpcall.org/static/js/jquery.min.js?v=2.1.4"></script>
+    <script src="http://ui.phpcall.org/static/js/plugins/layer/layer.min.js"></script>
+    <script src="http://ui.phpcall.org/static/js/bootstrap.min.js?v=3.3.6"></script>
+    <!--end ui 所需要的资源-->
+    
+    <link rel="stylesheet" href="/popup.ecc1261b.css">
+    <script src="/popup.bda9c846.js"></script>
+    <script src="/mock.5cc56cfd.js"></script>
+<script src="/popup.ecc1261b.js"></script></head>
+<body>
+
+    <button class="btn btn-success action">打开</button>
+
+
+<!--选择人员弹窗 -->
+<div class="container-fluid z-popup" style="display: none">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class=" origin-box">
+                <div class="">
+                    <h5 class="stitle">未选择</h5>
+                </div>
+                <div class="scroll-view">
+                    <ul class="origin"></ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class=" selected-box">
+                <div class="">
+                    <h5 class="stitle">已选择</h5>
+                </div>
+                <div class=" selected scroll-view">
+                    <ul></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--选择 -->
+<script>
+//自定义接口过滤
+function task_parseData(){
+
+}
+
+$('.action').zPopup({
+    title:'选择人员',
+    type:2,
+    init:function(cb){
+        /**
+         * 此方法是打开弹窗设置初始化数据
+         * 注意：
+         * 需要构建match字段，改字段用于区分是否勾选
+         **/
+
+        //  cb([{
+        //      id:5,
+        //      name:'我是5号佳丽',
+        //      type:'department',
+        //      match:'department_5',
+        //  },
+        //  {
+        //      id:10,
+        //      name:'我是10号佳丽',
+        //      type:'member',
+        //      match:'department_3_5',
+        //  }
+        // ])
+    },
+    load:function(param,cb){
+        /**
+         * 此方法是打开弹窗或者点击请求时的处理逻辑
+         * 此处约定勾选后会带回选中项的数据回来，所以可以通过对请求回来的数据处理，提交添加或设置需要的字段
+         * param.first 表示第一次打开，这里处理第一次的数据操作php渲染或者ajax请求都可以
+         **/
+        if(!param) return false;
+        var baseUrl = '?ct=ajax&ac=get_org_data';
+        if(param.first){
+            $.ajax({
+                url: baseUrl,
+                type: 'get',
+                dataType:"JSON"
+            }).done(function (data) {
+                if(data.status != 0){
+                    layer.alert(data.message);
+                    return false;
+                }
+                console.log(data);
+                cb(data.data);
+            }).fail(function (e) {
+                layer.alert('获取数据出错');
+            })
+        }else if(!isNaN(param.id)){
+            console.log(param);
+            var url = baseUrl + '&id=' + param.id +'&type=';
+            switch(param.type){
+                case 'sub_org':
+                    url += 'organization';
+                    break;
+                case 'department':
+                    url += 'department';
+                break;
+                case 'station':
+                    url += 'station';
+                    break;
+            }
+            if(!url) return false;
+            $.ajax({
+                url: url,
+                type: 'get',
+                dataType:"JSON"
+            }).done(function (data) {
+                console.log(data);
+                
+                if(data.status != 0){
+                    layer.alert(data.message);
+                    return false;
+                }
+                cb(data.data);
+            }).fail(function (e) {
+                layer.alert('获取数据出错');
+            })
+        }
+        
+    },
+    callback:function(rs){
+        console.log(rs);
+    }
+});
+</script>
+</body>
+</html>

@@ -8,6 +8,7 @@
  *   name: 'xx',
  *   type: 'xxx', //表示改项的类型，用于区分节点，如果后端数据不需要区分类型，可以在过滤方法添加固定值该属性，要保证能区分各个节点
  *   is_child: 1|0, // 1表示有下一级，0表示5无下级
+ *   disabled: 1|0, // 1表示有表示不可编辑，0或者没有改字段表示可编辑
  *   is_checkbox:boolean , //当type =2的情况下需要此参数判断是否未复选框，改字段由前端构建即可
  * }
  * 
@@ -112,7 +113,6 @@
                         //初始化操作
                         self.status.hasInit = true;
                         typeof self.$init== 'function' && self.$init(function(rs){
-
                             //init 构建的uid一律为负数,注意需要构建match字段，通过此字段来确定是否勾选
                             var idx = -2;
                             $.each(rs,function(i,item){
@@ -136,9 +136,17 @@
 
         //单选
         $origin.on("change",".check",function(e,ignoreCheckAll,ignoreRender){
+            e.preventDefault();
+            
             var _this = $(this),
                 id = _this.val(),
                 uid = _this.closest('li').data('uid');
+
+            var item = self.get(uid);
+            if(item.disabled){
+                $(this).prop('checked',!this.checked)
+                return false;
+            }
 
             var p =_this.closest("ul").children(".checkall").find("input");
             var pid = p.val();
@@ -289,7 +297,7 @@
                                     html +='</ul></li>'
                                 }
                             }else{
-                                html += '<label ><input type="checkbox" class="check" value="'+item.id+'" data-match="'+item.match+'">'+item.name+'</label> ';
+                                html += '<label ><input type="checkbox" '+ (!!item.disabled ? "disabled" : "") +' class="check" value="'+item.id+'" data-match="'+item.match+'">'+item.name+'</label> ';
                             }
                             break;
                     }
@@ -315,10 +323,21 @@
                 if(ck.size()>0){
                     var uid = ck.closest('li').data('uid');
                     var ouid = $(this).data('uid');
+                    var oitem = self.get(ouid);
+                    var item = self.get(uid);
+                    
                     $(this).attr('data-uid',uid);
+
                     arrRemove(ouid);
                     objToArr(uid);
+
                     ck.prop('checked',true).trigger('change',[false,true]);
+                    if(typeof oitem.disabled !== undefined){
+                        item.disabled = oitem.disabled
+                        if(item.disabled){
+                            ck.prop('disabled',true);
+                        }
+                    }
                 }
             })
         }
@@ -349,7 +368,7 @@
             var leftstr = "";
             $.each(self.selectArr,function(i,id){
                 var item = self.get(id);
-                leftstr += '<li class="left-item" data-uid="'+item.uid+'" data-match="'+ item.match+'"><span>'+ (item.parent ? item.parent.name  + ' ' : '') + item.name + '</span> <i class="fa fa-close"></i></li>'
+                leftstr += '<li class="left-item" data-uid="'+item.uid+'" data-match="'+ item.match+'"><span>'+ (item.parent ? item.parent.name  + ' ' : '') + item.name + '</span>'+ (!item.disabled ? '<i class="fa fa-close"></i>' : '') +'</li>'
             })
             $selected.find("ul").html(leftstr);
         }

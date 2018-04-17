@@ -5,11 +5,11 @@
 function clone(b){
     var a;
     switch(toString.call(b)){
-        case "[object Number]":
-        case "[object String]":
-        case "[object Boolean]":
-            a = b;
-            break;
+        // case "[object Number]":
+        // case "[object String]":
+        // case "[object Boolean]":
+        //     a = b;
+        //     break;
         case "[object Function]":
             a = new Function('return '+b.toString())();
             break;
@@ -24,6 +24,9 @@ function clone(b){
             for(var key in b){
                 a[key] = clone(b[key]);
             }
+            break;
+        default:
+            a = b;
             break;
     }
     return a;

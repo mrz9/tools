@@ -4,6 +4,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <title>shop-vant</title>
+    <script>
+    (function(){
+      function rem(){
+        var 
+        owidth = (screen.width<window.innerWidth) ? screen.width : window.innerWidth,
+        fontSize = owidth > 1080 ? 114 : owidth/7.5;
+        fontSize = fontSize > 32 ? fontSize : 32; 
+        document.getElementsByTagName('html')[0].style.fontSize = fontSize + 'px';
+      }
+      
+      rem();
+      
+      window.onresize = function(){
+        rem();
+      }
+    })()
+    </script>
   </head>
   <body>
     <div id="app"></div>
