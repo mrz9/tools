@@ -1,25 +1,47 @@
 <template>
   <div id="detail">
-    <div class="swiper">
-
-    </div><!-- end swiper -->
-    <div class="content">
-        <div class="info">
-            <div class="name">女式抽绳长袖条纹 T恤</div>
-            <div class="price">
-                <span class="current">
-                    <span>¥</span><span>169</span>
-                </span>
+      <div class="row">
+        <z-swiper />
+        <div class="content">
+            <div class="info">
+                <div class="name">女式抽绳长袖条纹 T恤</div>
+                <div class="price">
+                    <span class="current">
+                        <span>¥</span><span>169</span>
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="aritcle">
+            <div class="tt">商品描述</div>
+            <div class="ct">
+                💕💕💕8073花鞋短袖T恤（原创专柜）
+        实体店批发最少70-80以上！
+        粉色、白色、紫色
+       M-XL码，价格：79
+👉原创定制，款式新颖别致，不会撞衫！超有春天的气息感～重工艺定制！这些T恤在实体都非常贵！我们全部出厂价！
+👉超赞的做工！线头都找不到一根！内里全部包边，前面图案手工定制！配饰都是定做的噢
+👉休闲韩版，M胸96104长62，M适合88～105，胖瘦不挑人
+            </div>
+        </div>
+    </div><!-- END row -->
+    <div class="bottom-bar-wrap"></div>
+    <div class="bottom-bar">
+        <a href="" class="btn buy">购买</a>
+        <a href="" class="btn fav">收藏</a>
+    </div><!--end bottom-bar -->
   </div><!-- end detail -->
 </template>
 
 <script>
 import Vue from 'vue';
 import VueQArt from 'vue-qart';
+import zSwiper from '@/web/components/swiper.vue';
+
 export default {
+    components:{
+        [zSwiper.name]:zSwiper
+    },
     data() {
         return {
             qrShow:false,
@@ -114,6 +136,10 @@ export default {
             }
         }
     },
+    mounted(){
+        console.log(12);
+        
+    },
     methods:{
         preview(index){
             ImagePreview(this.images,index)
@@ -123,14 +149,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.swiper {
-    height:5.4rem;
+.row {
+    width:10rem;
+    margin-left:auto;
+    margin-right:auto;
 }
+
 .content {
-    padding: .53333rem 0 .53333rem .4rem;
+    padding: .53333rem .53333rem .4rem;
     border-bottom: .26667rem solid #f4f4f4;
     display: flex;
-
+    background-color:#fff;
+    box-sizing: border-box;
     .name {
         font-size: .48rem;
         margin-bottom: .06667rem;
@@ -139,6 +169,68 @@ export default {
     .price {
         height: .74667rem;
         margin-bottom: .10667rem;
+        .current {
+                font-size: .64rem;
+                color: #B4282D;
+                font-weight: 700;
+        }
+    }
+}
+.aritcle {
+    padding:.4rem;
+    background-color:#fff;
+
+    .tt {
+        padding: 0 0 .4rem;
+        font-size: .37333rem;
+        line-height: 1;
+        background-position:bottom;
+        background-size:12px 1px;
+        background-image:linear-gradient(to right,#919191 33%,rgba(255,255,255,0) 0);
+        background-repeat: repeat-x;
+    }
+    .ct {
+        padding:.4rem 0;
+        line-height:.48rem;
+    }
+}
+.bottom-bar-wrap  {
+    height:1.38667rem;
+    border-bottom:.26667rem solid #f4f4f4;
+}
+.bottom-bar {
+    position:fixed;
+    width:100%;
+    bottom:0;
+    left:0;
+    background-color:#fff;
+    height:1.38667rem;
+    
+    &, .btn {
+        display:flex;
+        justify-content: center;
+        align-content: center
+    }
+    .btn {
+        width:50%;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        flex-grow: 0;
+        font-size:.37333rem;
+        border-top:1px solid;
+        flex-direction: column;
+        text-align: center;
+        height: 100%;
+    }
+    .fav {
+        border-color:#b4282d;
+        background-color: #b4282d;
+        color:#fff;
+    }
+    .buy {
+        background-color:#fff;
+        color:#333;
+        border-color:#c7c7c7;
     }
 }
 </style>

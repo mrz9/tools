@@ -12,7 +12,7 @@ Vue.use(list)
     .use(NavBar)
     .use(Icon)
 
-import App from '@/web/list.vue';
+import App from '@/web/detail.vue';
 
 
 new Vue({
