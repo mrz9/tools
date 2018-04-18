@@ -1,25 +1,94 @@
 <template>
-  <div id="detail">
-    <div class="swiper">
+  <div id="app">
+    <van-swipe :autoplay="3000">
+        <van-swipe-item v-for="(image, index) in images" :key="index">
+            <img v-lazy="image" @click="preview(index)"/>
+        </van-swipe-item>
+    </van-swipe>
+   
+   <div class="title-info">
+       <p>{{goods.title}}</p>
+       <p class="info">
+           <span class="new">¥ 99</span>
+           <del class="old">¥ 199</del>
+       </p>
+   </div>
 
-    </div><!-- end swiper -->
-    <div class="content">
-        <div class="info">
-            <div class="name">女式抽绳长袖条纹 T恤</div>
-            <div class="price">
-                <span class="current">
-                    <span>¥</span><span>169</span>
-                </span>
+    <van-tabs>
+        <van-tab v-for="tab in tabs" :title="tab.name" :key="tab.name">
+            <template slot="title">
+                <span class="van-ellipsis text-left ">{{tab.name}}</span>
+            </template>
+            {{ tab.value }}
+        </van-tab>
+    </van-tabs>
+
+    <van-goods-action>
+        <van-goods-action-mini-btn icon="chat" text="客服" />
+        <van-goods-action-mini-btn icon="cart" text="购物车" info="5" />
+        <van-goods-action-big-btn text="收藏" />
+        <van-goods-action-big-btn text="查看规格" primary @click="sku.status = true" />
+    </van-goods-action>
+
+    <van-sku
+        v-model="sku.status"
+        :sku="sku"
+        :goods="goods"
+        :reset-selected-sku-on-hide="true"
+        :close-on-click-overlay="true"
+        :hide-stock="true"
+    >
+        <template slot="sku-stepper">
+            <span></span>
+        </template>
+        <!-- 自定义 sku actions -->
+        <template slot="sku-actions" slot-scope="props">
+            <div class="van-sku-actions">
+                <van-button type="primary" bottom-action @click="qrShow = true">购买</van-button>
             </div>
-        </div>
-    </div>
-  </div><!-- end detail -->
+        </template>
+    </van-sku>
+
+    <van-popup v-model="qrShow">
+        <vue-q-art :config="qr"></vue-q-art>
+    </van-popup>
+  </div><!-- end instance -->
 </template>
 
 <script>
 import Vue from 'vue';
 import VueQArt from 'vue-qart';
+import {
+    Swipe, 
+    SwipeItem,
+    ImagePreview,
+    Lazyload, 
+    Tab, 
+    Tabs,
+    Sku,
+    Button,
+    GoodsAction,
+    GoodsActionBigBtn,
+    Popup,
+    GoodsActionMiniBtn
+    } from 'vant';
+
+Vue.use(Lazyload);
+
 export default {
+    components: {
+        [Swipe.name]: Swipe,
+        [SwipeItem.name]: SwipeItem,
+        [Tab.name]: Tab,
+        [Tabs.name]: Tabs,
+        [Sku.name]: Sku,
+        [GoodsAction.name]: GoodsAction,
+        [GoodsActionBigBtn.name]: GoodsActionBigBtn,
+        [GoodsActionMiniBtn.name]: GoodsActionMiniBtn,
+        [Button.name]: Button,
+        [Popup.name]: Popup,
+        'vue-q-art': VueQArt
+    },
     data() {
         return {
             qrShow:false,
@@ -122,23 +191,38 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.swiper {
-    height:5.4rem;
+<style lang="less">
+body {
+  background-color: #f8f8f8;
 }
-.content {
-    padding: .53333rem 0 .53333rem .4rem;
-    border-bottom: .26667rem solid #f4f4f4;
-    display: flex;
-
-    .name {
-        font-size: .48rem;
-        margin-bottom: .06667rem;
+.van-tab__pane,.title-info {
+    padding:10px 5px;
+    background-color:#fff;
+}
+.title-info {
+    margin-bottom:10px;
+    p {
+        margin:0;
     }
-
-    .price {
-        height: .74667rem;
-        margin-bottom: .10667rem;
+    .info {
+        margin-top:10px
+    }
+    span + del {
+        padding-left:5px;
+    }
+    span {
+        font-size:14px;
+        color:chocolate
+    }
+    del {
+        font-size:10px;
     }
 }
+.van-cell__title .van-icon {
+  font-size: 18px;
+}
+.text-left {
+    text-align: left;
+}
+
 </style>
