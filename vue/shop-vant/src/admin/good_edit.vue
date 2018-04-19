@@ -8,9 +8,6 @@
       
       <div class="cell-title">原价：</div>
       <van-field type="number" v-model="form.o_price" placeholder="原价（不填则页面不显示原价）" />
-      
-      <div class="cell-title">详情：</div>
-      <van-field type="textarea" :autosize="true" v-model="form.content" placeholder="输入商品描述" />
     
       <div class="cell-title">规格类型：</div>
       <div class="type-group">
@@ -41,7 +38,7 @@
           </van-cell>
       </div>
 
-    <div class="cell-title">效果图：</div>
+    <div class="cell-title">轮播图：</div>
     <van-cell-group class="upload-wrap">
       <div class="flex-item">
         <van-uploader class="add-img" :after-read="imgRead">
@@ -52,6 +49,31 @@
         <div class="img" :style="{'background-image':'url('+img+')'}" ></div>
       </div>
     </van-cell-group>
+
+     <div class="cell-title">内容详情图片：</div>
+      <van-cell-group class="upload-wrap">
+        <div class="flex-item">
+          <van-uploader class="add-img" :after-read="contentImgRead">
+            <van-icon name="photograph" />
+          </van-uploader>
+        </div>
+        <div class="flex-item" v-for="(img,index) in form.content_thumbs" :key="index">
+          <div class="img" :style="{'background-image':'url('+img+')'}" ></div>
+        </div>
+      </van-cell-group>
+
+      <div class="cell-title">内容详情视频：</div>
+      <van-cell-group class="upload-wrap">
+        <div class="flex-item">
+          <div class="add-img" >
+            <van-icon name="play" />
+          </div>
+        </div>
+       
+      </van-cell-group>
+
+      <div class="cell-title">详情：</div>
+      <van-field type="textarea" :autosize="true" v-model="form.content" placeholder="输入商品描述" />
 
       <div class="filed-wrap ">
         <van-button class="submit" type="primary" :disabled="formStatus" :loading="posting" block @click="submit">提交</van-button>
@@ -70,6 +92,7 @@ export default {
         o_price: "", //原价 非必填
         content: "",
         thumbs: [],
+        content_thumbs:[],
         tree:[]
       }
     };
@@ -105,6 +128,9 @@ export default {
     },
     imgRead(rs) {
       this.form.thumbs.push(rs.content);
+    },
+    contentImgRead(rs){
+      this.form.content_thumbs.push(rs.content);
     },
     reset(){
       this.posting = false;
