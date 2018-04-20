@@ -8,7 +8,7 @@ import TypeEdit from '@/admin/type_edit.vue';
 import 'vant/lib/vant-css/icon-local.css';
 
 //test
-require('@/test/mock.js')
+// require('@/test/mock.js')
 
 require('@/admin/less/main.less');
 
@@ -25,11 +25,14 @@ import {
   Button,
   Tag,
   Toast,
+  TreeSelect,
   ContactCard
  } from 'vant';
 
+Vue.use(TreeSelect);
 Vue.use(NavBar)
     .use(Cell)
+    .use(TreeSelect)
     .use(CellGroup)
     .use(Field)
     .use(Uploader)

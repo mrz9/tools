@@ -1,6 +1,6 @@
 
 <template>
-  <div class="page-tyoe-edit">
+  <div class="page-type-edit">
       <div class="cell-title">分类名称：</div>
       <van-field  v-model="form.name" placeholder="选择分类名称" />
 
@@ -16,6 +16,7 @@
         <van-picker
           show-toolbar
           title="选择"
+          value-key="name"
           :columns="typeData"
           @cancel="onCancel"
           @confirm="onConfirm"
@@ -43,12 +44,8 @@ export default {
       },
       typeData: [
         {
-          text: "顶级分类",
+          name: "顶级分类",
           id: 0
-        },
-        {
-          text: "分类1",
-          id: 1
         }
       ]
     };
@@ -58,13 +55,41 @@ export default {
       return !String(this.form.name).trim();
     }
   },
+  mounted(){
+    this.loadType();
+  },
   methods: {
+    loadType(){
+      Toast.loading({
+        type:'loading',
+        mask:true,
+        duration: 0,       // 持续展示 toast
+        forbidClick: true, // 禁用背景点击
+        message: '正在获取分类信息'
+      });
+        axios.get("http://localhost:7001/admin/type/getTypes")
+          .then(response=>{
+            let { data } = response;
+            if (data.status == 0) {
+              this.typeData = this.typeData.concat(data.data.filter(item=>item.pid==0));
+              Toast.clear();
+            } else {
+              Toast.fail(data.message);
+            }
+          })
+          .catch(e=>{
+              Toast({
+                type:'text',
+                message:"获取分类失败，请刷新页面"
+              });
+          });
+    },
     onCancel(item) {
       this.popupShow = false;
     },
     onConfirm(item) {
       this.form.pid = item.id;
-      this.typeLabel = item.text;
+      this.typeLabel = item.name;
       this.popupShow = false;
     },
     reset() {
@@ -75,11 +100,11 @@ export default {
     submit() {
       this.posting = true;
       axios
-        .post("/admin/type/create", this.form)
+        .post("http://localhost:7001/admin/type/create", this.form)
         .then(response => {
           let { data } = response;
           if (data.status == 0) {
-            Toast.success("成功文案");
+            Toast.success("添加成功");
             this.reset();
           } else {
             Toast.fail(data.message);
@@ -95,7 +120,7 @@ export default {
 };
 </script>
 <style lang="less">
-.page-tyoe-edit {
+.page-type-edit {
   .bottom-btn {
     position: absolute;
     bottom: 0;
