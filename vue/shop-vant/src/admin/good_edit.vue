@@ -17,7 +17,7 @@
                  <van-button slot="button" size="mini" type="danger" @click="deleteTree(index)">删除</van-button>
               </van-field>
               <van-cell  class="sub-list">
-                <van-tag type="primary" v-for="(tag,idx) in item.list" :key="idx">{{tag}}</van-tag>
+                <van-tag type="primary" v-for="(tag,idx) in item.list" :key="idx" @click="item.list.splice(idx,1)">{{tag}}</van-tag>
               </van-cell>
               <van-field
                 v-show="item.name"
@@ -67,9 +67,17 @@
       <div class="cell-title">内容详情视频：</div>
       <van-cell-group class="upload-wrap">
         <div class="flex-item">
+          <input type="file" name="video" @change="videoChange">
           <div class="add-img" >
             <van-icon name="play" />
           </div>
+        </div>
+
+        <div class="flex-item" v-show="!!form.video">
+          <div class="video-wrap" >
+            <van-icon name="play" />
+          </div>
+          <van-icon name="clear" class="btn-close" @click="clearVideo"/>
         </div>
        
       </van-cell-group>
@@ -83,7 +91,9 @@
   </div>
 </template>
 <script>
+import axios from 'axios';
 import { ImagePreview } from 'vant';
+import { Toast } from 'vant';
 
 var waterSrc = 'data:image/png;base64,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';
 function getBase64(rs,cb){
@@ -115,13 +125,21 @@ export default {
     return {
       posting: false,
       form: {
-        title: "",
-        n_price: "", //现价
-        o_price: "", //原价 非必填
-        content: "",
+        title: "这是标题",
+        n_price: "99", //现价
+        o_price: "299", //原价 非必填
+        content: "这是内容",
         thumbs: [],
         content_thumbs:[],
-        tree:[]
+        video:'',
+        tree:[{
+          name:"颜色",
+          list:['红色',"绿色",'白色']
+        },
+        {
+          name:"尺寸",
+          list:['L',"M",'S']
+        }]
       }
     };
   },
@@ -167,6 +185,13 @@ export default {
         this.form.content_thumbs.push(r);
       })
     },
+    videoChange(e){
+      this.form.video = e.currentTarget.files[0];
+      e.currentTarget.value = "";
+    },
+    clearVideo(){
+      this.form.video = '';
+    },
     reset(){
       this.posting = false;
       this.form = {
@@ -174,13 +199,62 @@ export default {
         n_price: "", //现价
         o_price: "", //原价 非必填
         content: "",
-        thumbs: []
+        thumbs: [],
+        content_thumbs:[],
+        video:''
       }
     },
     submit() {
       this.posting = true;
-      axios
-        .post("/admin/good/create", this.form)
+      let formdata = new FormData();
+
+      Object.keys(this.form).forEach(k=>{
+        let key  = k,v = this.form[k];
+        
+        if (toString.call(v) == "[object Object]" || toString.call(v) == "[object Array]"){
+          if(k == 'thumbs' || k== 'content_thumbs'){
+            v = v.join("_|_")
+          }else{
+            v = JSON.stringify(v);
+          }
+        }
+        formdata.set(key,v);
+      })
+
+      console.log(formdata);
+      //  var formdata = new FormData(form);
+        var xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+        xhr.onreadystatechange = function(){
+            if(xhr.readyState == 4 && xhr.status == 200){
+                console.log(xhr.response);
+            }
+        }
+        xhr.upload.onprogress = progressFunction;//【上传进度调用方法实现】
+
+        xhr.open("POST",'http://localhost:7001/admin/good/create');
+        xhr.send(formdata);
+        function progressFunction(evt) {
+            let total,loaded,percent;
+            // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
+            if (evt.lengthComputable) {//
+                total = evt.total;
+                loaded = evt.loaded;
+                percent = Math.round(evt.loaded / evt.total * 100) + "%";
+                console.log(total,loaded,percent)
+            }
+        }
+        this.posting = false;
+        return false;
+      axios({
+          method:'post',
+          url:"http://localhost:7001/admin/good/create",
+          data:formdata,
+          onUploadProgress: function (progressEvent) {
+            // Do whatever you want with the native progress event
+            console.log(progressEvent)
+          }
+        })
         .then(response => {
           let { data } = response;
           if (data.status == 0) {
@@ -224,6 +298,17 @@ body {
     text-align: center;
     vertical-align: middle;
     position: relative;
+
+    [type=file] {
+      position: absolute;
+      z-index:9;
+      top:0;
+      left:0;
+      bottom:0;
+      right:0;
+      width:100%;
+      opacity:0;
+    }
   }
   .btn-close {
     position: absolute;
@@ -237,6 +322,7 @@ body {
     color:#f44336;
   }
   .add-img,
+  .video-wrap,
   .img {
     display: inline-block;
     width: 100px;
@@ -248,7 +334,10 @@ body {
     background-repeat: no-repeat;
     background-position: center;
   }
-  .add-img {
+  .video-wrap {
+    background-color:#000;
+  }
+  .add-img,.video-wrap {
     text-align: center;
     box-sizing: border-box;
     border: 1px solid #d7d7d7;
