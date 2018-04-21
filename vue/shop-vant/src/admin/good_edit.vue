@@ -362,16 +362,7 @@ export default {
 };
 </script>
 
-<style lang="less">
-body {
-  background-color: #efefef;
-}
-// .page-good-edit {
-.cell-title {
-  padding: 10px 15px;
-  font-size: 14px;
-  color: rgba(69, 90, 100, 0.6);
-}
+<style lang="less" scoped>
 
 .upload-wrap {
   padding: 15px;
@@ -443,8 +434,6 @@ body {
   padding-right: 0;
   .type-wrap {
     margin-bottom: 10px;
-  }
-  .van-cell {
   }
   .sub-list {
     margin-left: -10px;
