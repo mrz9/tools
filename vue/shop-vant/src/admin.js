@@ -29,7 +29,7 @@ import {
   TreeSelect,
   List,
   Search,
-  ,
+  CellSwipe,
   ContactCard
  } from 'vant';
 
