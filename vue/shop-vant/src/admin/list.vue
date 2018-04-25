@@ -3,11 +3,36 @@
         <van-list
         v-model="loading"
         :finished="finished"
+        class="good-list"
         @load="onLoad"
         >
-        <van-cell v-for="item in list" :key="item" :title="item + ''" />
+          <van-cell-swipe :right-width="65" v-for="item in list" :key="item" :on-close="onClose">
+            <van-cell-group>
+              <van-cell>
+                <div class="fx list-item">
+                  <div class="fx fx-hc fx-mc fx-none img">
+                    <img src="" alt="">
+                  </div>
+                  <div class="cont fx-auto fx fx-dc">
+                    <p>title</p>
+                    <div class="type-level">
+                      <span>xxx > xxx</span>
+                    </div>
+                    <div class="span">
+                      <span>¥100</span>
+                      <del>¥100</del>
+                    </div>
+                  </div>
+                </div>
+              </van-cell>
+            </van-cell-group>
+            <span slot="right" class="action fx fx-dc fx-hc fc-vc del">
+              <span>下架</span>
+            </span>
+          </van-cell-swipe>
         </van-list>
 
+        <!-- filter -->
         <van-popup v-model="filter.popup" position="right" :overlay="true" @click-overlay="filterCancel">
             <div class="filter-wrap">
                 <div class="flex-wrap">
@@ -44,12 +69,14 @@
             </div>
         </van-popup>
         
+        <!-- type picker -->
         <z-type :inject="zType" @itemclick="typeClick"/>
     </div>
 </template>
 <script>
 import axios from "axios";
 import zType from "@/admin/components/type.vue";
+import {Dialog} from 'vant';
 export default {
   name: "good_list",
   components: {
@@ -100,6 +127,23 @@ export default {
       });
   },
   methods: {
+     onClose(clickPosition, instance) {
+       console.log(clickPosition)
+      switch (clickPosition) {
+        case 'left':
+        case 'cell':
+        case 'outside':
+          instance.close();
+          break;
+        case 'right':
+          Dialog.confirm({
+            message: '确定删除吗？'
+          }).then(() => {
+            instance.close();
+          });
+          break;
+      }
+    },
     onLoad() {
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
@@ -188,5 +232,70 @@ export default {
   display: inline-block;
   color: #4caf50;
   background-color: #fff;
+}
+
+.good-list {
+  .van-cell {
+    padding-left:0;
+    padding-right:0;
+  }
+}
+.list-item {
+  height:120px;
+  
+  .img {
+    width:130px;
+  }
+  img {
+    display: block;
+    background-color:#ddd;
+    width: 100%;
+    height:auto;
+  }
+  .cont {
+    margin-left:10px;
+    text-align: left;
+
+    p {
+      margin:0 0 10px;
+      display: -webkit-box;
+      flex:auto;
+      -webkit-box-orient: vertical;  
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+    }
+  }
+}
+
+.type-level {
+  margin-bottom:10px;
+  
+  span {
+    background-color:#4caf50;
+    color:#fff;
+    border-radius:4px;
+    padding:0 6px;
+  }
+}
+.span {
+  font-size:14px;
+  color:#999;
+  span:first-child {
+    color:red;
+  }
+}
+
+.action {
+  text-align: center;
+  width:65px;
+  height:100%;
+  color:#fff;
+}
+
+.action.del {
+  background-color:#f44;
+}
+.action.up {
+  background-color:#4b0;
 }
 </style>
