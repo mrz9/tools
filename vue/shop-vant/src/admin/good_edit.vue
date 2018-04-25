@@ -52,7 +52,7 @@
         </van-uploader>
       </div>
       <div class="flex-item" v-for="(img,index) in form.thumbs" :key="index">
-        <div class="img" :style="{'background-image':'url('+img+')'}" @click="preview(form.thumbs,index)"></div>
+        <div class="img" :style="{'background-image':'url('+(!img.startsWith('data:image') ? baseUrl +  img : img )+')'}" @click="preview(form.thumbs,index)"></div>
         <van-icon name="clear" class="btn-close" @click="form.thumbs.splice(index,1)"/>
       </div>
     </van-cell-group>
@@ -65,7 +65,7 @@
           </van-uploader>
         </div>
         <div class="flex-item" v-for="(img,index) in form.content_thumbs" :key="index">
-          <div class="img" :style="{'background-image':'url('+img+')'}" @click="preview(form.content_thumbs,index)"></div>
+          <div class="img" :style="{'background-image':'url('+ (!img.startsWith('data:image') ? baseUrl +  img : img )+')'}" @click="preview(form.content_thumbs,index)"></div>
           <van-icon name="clear" class="btn-close" @click="form.content_thumbs.splice(index,1)"/>
         </div>
       </van-cell-group>
@@ -145,6 +145,8 @@ export default {
   data() {
     return {
       posting: false,
+      isUpdate:false,
+      baseUrl : '',
       typeSelect: {
         label:"",
         status: false,
@@ -183,18 +185,26 @@ export default {
   mounted() {
     console.log(this.$route.params)
     if(!isNaN(this.$route.params.id)){
+      this.isUpdate = true;
+      this.baseUrl = 'http://localhost:7001';
       axios
         .get("http://localhost:7001/admin/good/find/" + this.$route.params.id)
         .then(response => {
           console.log(response.data);
           let {data} = response;
           if(data.status == 0){
-            console.log(data);
             this.form.title = data.data.title;
             this.form.o_price = data.data.origin_price;
             this.form.n_price = data.data.new_price;
             this.form.content = data.data.content;
             this.form.type = data.data.type;
+
+            this.form.thumbs = data.data.thumbs.split(',');
+            this.form.content_thumbs = data.data.content_thumbs.split(',');
+
+            this.form.video = data.data.video;
+            this.form.tree = data.data.tree ? JSON.parse(data.data.tree) : [];
+            
           }else{
              Toast({
               type: "text",
@@ -290,7 +300,7 @@ export default {
       });
     },
     preview(arr, index = 0) {
-      ImagePreview(arr, index);
+      ImagePreview(arr.map(item=> item.startsWith('data:image') ? item : this.baseUrl + item), index);
     },
     imgRead(rs) {
       getBase64(rs, r => {
@@ -352,13 +362,17 @@ export default {
         formdata.set(key, v);
       });
 
+      if(this.isUpdate){
+        formdata.set('id',this.$route.params.id);
+      }
+
       var xhr = new XMLHttpRequest();
       xhr.responseType = "json";
       xhr.onreadystatechange = ()=>{
         if (xhr.readyState == 4 && xhr.status == 200) {
             let data = xhr.response;
             if (data.status == 0) {
-              Toast.success("创建成功");
+              Toast.success("成功");
               this.reset();
             } else {
               Toast.fail(data.message);
@@ -368,7 +382,9 @@ export default {
       };
       xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
 
-      xhr.open("POST", "http://localhost:7001/admin/good/create");
+      let url = "http://localhost:7001/admin/good/create";
+      if(this.isUpdate) url = `http://localhost:7001/admin/good/update/${this.$route.params.id}`;
+      xhr.open("POST", url);
       xhr.onerror = (e)=>{
           Toast.fail("请求错误");
           this.posting = false;
