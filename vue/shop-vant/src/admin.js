@@ -58,6 +58,7 @@ const EventPaster = new Vue();
 const routes = [
   { path: '/', name:'home',component: GoodList },
   { path: '/good/add', name:'good_add', component: GoodEdit },
+  { path: '/good/edit/:id', name:'good_edit', component: GoodEdit },
   { path: '/good/list',name:'list', component: GoodList },
   { path: '/type/add', name:'type_add',component: TypeEdit }
 ]

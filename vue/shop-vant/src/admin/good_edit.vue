@@ -181,6 +181,35 @@ export default {
     }
   },
   mounted() {
+    console.log(this.$route.params)
+    if(!isNaN(this.$route.params.id)){
+      axios
+        .get("http://localhost:7001/admin/good/find/" + this.$route.params.id)
+        .then(response => {
+          console.log(response.data);
+          let {data} = response;
+          if(data.status == 0){
+            console.log(data);
+            this.form.title = data.data.title;
+            this.form.o_price = data.data.origin_price;
+            this.form.n_price = data.data.new_price;
+            this.form.content = data.data.content;
+            this.form.type = data.data.type;
+          }else{
+             Toast({
+              type: "text",
+              message: data.message
+            });
+          }
+        })
+        .catch(e => {
+          console.log(e);
+          Toast({
+            type: "text",
+            message: "获取分类失败，请刷新页面"
+          });
+        });
+    }
     this.loadType();
   },
   methods: {

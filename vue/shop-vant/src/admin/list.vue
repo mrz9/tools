@@ -6,21 +6,21 @@
         class="good-list"
         @load="onLoad"
         >
-          <van-cell-swipe :right-width="65" v-for="item in list" :key="item" :on-close="onClose">
+          <van-cell-swipe :right-width="65" v-for="item in list" :key="item.id" :on-close="onClose">
             <van-cell-group>
-              <van-cell>
+              <van-cell :to="'/good/edit/' + item.id">
                 <div class="fx list-item">
                   <div class="fx fx-hc fx-mc fx-none img">
-                    <img src="" alt="">
+                    <img :src="'http://localhost:7001' + item.image" alt="">
                   </div>
                   <div class="cont fx-auto fx fx-dc">
-                    <p>title</p>
+                    <p>{{item.title}}</p>
                     <div class="type-level">
                       <span>xxx > xxx</span>
                     </div>
                     <div class="span">
-                      <span>¥100</span>
-                      <del>¥100</del>
+                      <span>¥{{item.price}}</span>
+                      <del v-if="item.o_price !== ''">¥{{item.o_price}}</del>
                     </div>
                   </div>
                 </div>
@@ -112,19 +112,7 @@ export default {
     this.$router.app.$off("toggleSearch");
   },
   mounted() {
-    axios
-      .get("http://localhost:7001/admin/good/list/0/1")
-      .then(response => {
-        let { data } = response;
-        if (data.status == 0) {
-          console.log(data);
-        } else {
-          console.log(data.message);
-        }
-      })
-      .catch(e => {
-        console.error(e);
-      });
+    
   },
   methods: {
      onClose(clickPosition, instance) {
@@ -145,16 +133,26 @@ export default {
       }
     },
     onLoad() {
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        this.loading = false;
-
-        if (this.list.length >= 40) {
+    axios
+      .get("http://localhost:7001/admin/good/list")
+      .then(response => {
+        let { data } = response;
+        if (data.status == 0) {
+          if(data.data.length < 20) {
+            this.finished = true;
+          }
+          this.list = this.list.concat(data.data);
+        } else {
+          console.log(data.message);
           this.finished = true;
         }
-      }, 500);
+        this.loading = false;
+      })
+      .catch(e => {
+        console.error(e);
+        this.loading = false;
+        this.finished = true;
+      });
     },
     typeClick(item) {
       this.zType.label = item.text;
