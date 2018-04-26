@@ -16,7 +16,7 @@
                   <div class="cont fx-auto fx fx-dc">
                     <p>{{item.title}}</p>
                     <div class="type-level">
-                      <span>xxx > xxx</span>
+                      <span>{{zType.map[item.type].name}}</span>
                     </div>
                     <div class="span">
                       <span>¥{{item.price}}</span>
@@ -76,7 +76,10 @@
 <script>
 import axios from "axios";
 import zType from "@/admin/components/type.vue";
-import {Dialog} from 'vant';
+import {Dialog,Toast} from 'vant';
+
+axios.defaults.baseURL = 'http://localhost:7001';
+
 export default {
   name: "good_list",
   components: {
@@ -96,11 +99,13 @@ export default {
       },
       zType: {
         status: false,
-        label: "所有分类"
+        label: "所有分类",
+        map:{},
+        items:[]
       },
       list: [],
       loading: false,
-      finished: false
+      finished: true
     };
   },
   created() {
@@ -112,9 +117,64 @@ export default {
     this.$router.app.$off("toggleSearch");
   },
   mounted() {
-    
+    this.loadType().then(()=>{
+      console.log('type done');
+      this.finished = false;
+    })
   },
   methods: {
+    loadType(){
+      Toast.loading({
+      type: "loading",
+      mask: true,
+      duration: 0, // 持续展示 toast
+      forbidClick: true, // 禁用背景点击
+      message: "获取分类信息"
+    });
+    return axios
+      .get("/admin/type/getTypes")
+      .then(response => {
+        let { data } = response;
+        if (data.status == 0) {
+          let types = [],
+            tmap = {};
+          data.data.forEach(item => {
+            this.zType.map[item.id] = item;
+            if (item.pid == 0) {
+              if (!tmap[item.id]) tmap[item.id] = {};
+              tmap[item.id].text = item.name;
+              tmap[item.id].children = [];
+            } else {
+              if (!tmap[item.pid]) {
+                tmap[item.pid] = {};
+                tmap[item.pid].children = [];
+              }
+            tmap[item.pid].children.push({
+                id: item.id,
+                text: item.name,
+                pid: item.pid
+            });
+              
+            }
+          });
+
+          Object.keys(tmap).forEach(k => {
+            types.push(tmap[k]);
+          });
+
+          this.zType.items = types;
+          Toast.clear();
+        } else {
+          Toast.fail(data.message);
+        }
+      })
+      .catch(e => {
+        Toast({
+          type: "text",
+          message: "获取分类失败，请刷新页面"
+        });
+      });
+    },
      onClose(clickPosition, instance) {
        console.log(clickPosition)
       switch (clickPosition) {
@@ -134,7 +194,7 @@ export default {
     },
     onLoad() {
     axios
-      .get("http://localhost:7001/admin/good/list")
+      .get("/admin/good/list")
       .then(response => {
         let { data } = response;
         if (data.status == 0) {
@@ -146,13 +206,14 @@ export default {
           console.log(data.message);
           this.finished = true;
         }
-        this.loading = false;
       })
       .catch(e => {
         console.error(e);
-        this.loading = false;
         this.finished = true;
-      });
+      }).finally(()=>{
+        console.log('finally');
+        this.loading = false;
+      })
     },
     typeClick(item) {
       this.zType.label = item.text;

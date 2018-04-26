@@ -91,6 +91,11 @@
       <div class="cell-title">详情：</div>
       <van-field type="textarea" :autosize="true" v-model="form.content" placeholder="输入商品描述" />
 
+      <div class="cell-title">是否发布商品：</div>
+      <van-cell>
+        <van-switch v-model="form.status" />
+      </van-cell>
+
       <div class="filed-wrap ">
         <van-button class="submit" type="primary" :disabled="formStatus" :loading="posting" block @click="submit">提交</van-button>
       </div>
@@ -161,6 +166,7 @@ export default {
         content: "",
         thumbs: [],
         type:'',
+        status:false,
         content_thumbs: [],
         video: "",
         tree: []
@@ -198,6 +204,8 @@ export default {
             this.form.n_price = data.data.new_price;
             this.form.content = data.data.content;
             this.form.type = data.data.type;
+
+            this.form.status = data.data.status == 1 ? true : false;
 
             this.form.thumbs = data.data.thumbs.split(',');
             this.form.content_thumbs = data.data.content_thumbs.split(',');
@@ -325,6 +333,7 @@ export default {
         title: "",
         type:'',
         tree:[],
+        status:false,
         n_price: "", //现价
         o_price: "", //原价 非必填
         content: "",
@@ -355,10 +364,12 @@ export default {
         ) {
           if (k == "thumbs" || k == "content_thumbs") {
             v = v.join("_|_");
-          } else {
+          }else {
             v = JSON.stringify(v);
           }
-        }
+        }else if(k == 'status'){
+            v = v ? 1 : 0
+          } 
         formdata.set(key, v);
       });
 

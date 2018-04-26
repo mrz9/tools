@@ -30,6 +30,7 @@ import {
   List,
   Search,
   CellSwipe,
+  Switch,
   ContactCard
  } from 'vant';
 
@@ -47,6 +48,7 @@ Vue.use(NavBar)
     .use(ContactCard)
     .use(List)
     .use(Search)
+    .use(Switch)
     .use(CellSwipe)
     .use(Icon);
 
