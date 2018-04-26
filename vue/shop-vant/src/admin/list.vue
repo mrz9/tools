@@ -11,7 +11,7 @@
               <van-cell :to="'/good/edit/' + item.id">
                 <div class="fx list-item">
                   <div class="fx fx-hc fx-mc fx-none img">
-                    <img :src="'http://localhost:7001' + item.image" alt="">
+                    <img :src="item.image" alt="">
                   </div>
                   <div class="cont fx-auto fx fx-dc">
                     <p>{{item.title}}</p>
@@ -78,7 +78,7 @@ import axios from "axios";
 import zType from "@/admin/components/type.vue";
 import {Dialog,Toast} from 'vant';
 
-axios.defaults.baseURL = 'http://localhost:7001';
+axios.defaults.baseURL = '';
 
 export default {
   name: "good_list",
@@ -176,7 +176,6 @@ export default {
       });
     },
      onClose(clickPosition, instance) {
-       console.log(clickPosition)
       switch (clickPosition) {
         case 'left':
         case 'cell':
@@ -203,15 +202,12 @@ export default {
           }
           this.list = this.list.concat(data.data);
         } else {
-          console.log(data.message);
           this.finished = true;
         }
       })
       .catch(e => {
-        console.error(e);
         this.finished = true;
       }).finally(()=>{
-        console.log('finally');
         this.loading = false;
       })
     },

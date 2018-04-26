@@ -175,16 +175,6 @@ export default {
   },
   computed: {
     formStatus() {
-      // title: "",
-      //   n_price: "", //现价
-      //   o_price: "", //原价 非必填
-      //   content: "",
-      //   thumbs: []
-
-      // if(!this.form.title.trim() ||
-      //     this.form.n_price &&isNaN(this.form.n_price)
-      //   )
-
       return !String(this.form.name).trim();
     }
   },
@@ -192,11 +182,9 @@ export default {
     console.log(this.$route.params)
     if(!isNaN(this.$route.params.id)){
       this.isUpdate = true;
-      this.baseUrl = 'http://localhost:7001';
       axios
-        .get("http://localhost:7001/admin/good/find/" + this.$route.params.id)
+        .get("/admin/good/find/" + this.$route.params.id)
         .then(response => {
-          console.log(response.data);
           let {data} = response;
           if(data.status == 0){
             this.form.title = data.data.title;
@@ -240,7 +228,7 @@ export default {
         message: "获取分类信息"
       });
       axios
-        .get("http://localhost:7001/admin/type/getTypes")
+        .get("/admin/type/getTypes")
         .then(response => {
           let { data } = response;
           if (data.status == 0) {
@@ -277,7 +265,6 @@ export default {
           }
         })
         .catch(e => {
-          console.log(e);
           Toast({
             type: "text",
             message: "获取分类失败，请刷新页面"
@@ -393,8 +380,8 @@ export default {
       };
       xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
 
-      let url = "http://localhost:7001/admin/good/create";
-      if(this.isUpdate) url = `http://localhost:7001/admin/good/update/${this.$route.params.id}`;
+      let url = "/admin/good/create";
+      if(this.isUpdate) url = `/admin/good/update/${this.$route.params.id}`;
       xhr.open("POST", url);
       xhr.onerror = (e)=>{
           Toast.fail("请求错误");
@@ -403,14 +390,15 @@ export default {
       xhr.send(formdata);
       function progressFunction(evt) {
         let total, loaded, percent;
-        // event.total是需要传输的总字节，event.loaded是已经传输的字节。如果event.lengthComputable不为真，则event.total等于0
         if (evt.lengthComputable) {
-          //
           total = evt.total;
           loaded = evt.loaded;
           percent = Math.round(evt.loaded / evt.total * 100) + "%";
-          console.log(total, loaded, percent);
-          toast.message = `已上传 ${percent}`;
+          if(total == loaded){
+            toast.message = '数据处理中'
+          }else{
+            toast.message = `已上传 ${percent}`;
+          }
         }
       }
     }

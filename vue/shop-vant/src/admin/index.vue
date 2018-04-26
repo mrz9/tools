@@ -14,6 +14,7 @@
             <van-cell-group>
                 <van-cell title="添加商品" @click="toggleDrawer" to="/good/add"/>
                 <van-cell title="添加分类" @click="toggleDrawer" to="/type/add"/>
+                <van-cell title="退出登录" @click="toggleDrawer" url="/admin/user/logout"/>
             </van-cell-group>
           </div><!-- drawer-content -->
           <div slot="content" class="flex-scroll-view">

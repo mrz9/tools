@@ -67,7 +67,7 @@ export default {
         forbidClick: true, // 禁用背景点击
         message: '正在获取分类信息'
       });
-        axios.get("http://localhost:7001/admin/type/getTypes")
+        axios.get("/admin/type/getTypes")
           .then(response=>{
             let { data } = response;
             if (data.status == 0) {
@@ -100,7 +100,7 @@ export default {
     submit() {
       this.posting = true;
       axios
-        .post("http://localhost:7001/admin/type/create", this.form)
+        .post("/admin/type/create", this.form)
         .then(response => {
           let { data } = response;
           if (data.status == 0) {
